@@ -1,0 +1,138 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MoneyBook</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <style>
+        td {
+            text-align: center;
+        }
+
+        tr {
+            text-align: center
+        }
+    </style>
+    <script type="text/ng-template">
+
+    </script>
+</head>
+<body ng-app="appGetCurrentMonth" ng-controller="ctlGetCurrentMonth">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">记账簿</a>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">主页<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#frmAdd" href="javascript:void(0)">添加</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">保存</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    @*<partial name="_CookieConsentPartial" />*@
+    <div style="margin-top:70px">
+        <div class="container">
+            <div class="row"></div>
+            <div class="row">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>日期</td>
+                            <td>流向</td>
+                            <td>花销内容</td>
+                            <td>金额</td>
+                            <td>百分比</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="info in detail">
+                        <tr ng-repeat="useInfo in info.detail track by $index" ng-if="useInfo.isDelete==false">
+                            <td ng-if="$index==0" rowspan="{{info.detail.length}}" style="vertical-align: middle">
+                                {{info.date|date:'yyyy-MM-dd'}}
+                            </td>
+                            <td>{{useInfo.isSpendShow}}</td>
+                            <td>{{useInfo.useWay}}</td>
+                            <td>{{useInfo.useAmount}}</td>
+                            <td>1</td>
+                            <td><a ng-click="deleteDetail(useInfo)" href="javascript:void(0)">删除</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="modal" id="frmAdd" tabindex="-1" aria-labelledby="frmAddLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="frmAddLabel">添加</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" for="dateRecord">日期</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="dateRecord" placeholder="记录日期" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2018 - MoneyBook</p>
+    </footer>
+
+</body>
+</html>
+<script>
+   
+</script>

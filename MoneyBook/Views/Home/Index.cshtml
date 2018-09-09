@@ -1,0 +1,246 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MoneyBook</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/vue/vue.min.js"></script>
+    <script src="~/lib/vue/vue-resource.min.js"></script>
+    <style>
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr {
+            text-align: center
+        }
+
+        .active {
+            display: none
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">记账簿</a>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="javascript:void(0)">主页<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" data-target="#frmAdd" href="javascript:void(0)">添加</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="javascript:void(0)" v-on:click="saveData()">保存</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="margin-top:70px">
+            <div class="container">
+                <div class="row"></div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>日期</td>
+                                <td>流向</td>
+                                <td>花销内容</td>
+                                <td>金额</td>
+                                <td>百分比</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(info,i) in infos">
+                            <tr v-if="useInfo.isDelete==false" v-for="(useInfo,k) in info.detail">
+                                <td :rowspan="info.detail.length" v-bind:class="{active:showTD(i,k)}" style="vertical-align: middle;">
+                                    {{info.date|dateFormat}}
+                                </td>
+                                <td>{{useInfo.isSpendShow}}</td>
+                                <td>{{useInfo.useWay}}</td>
+                                <td>{{useInfo.useAmount}}</td>
+                                <td>1</td>
+                                <td><a v-on:click="deleteDetail(i,k)" href="javascript:void(0)">删除</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="modal" id="frmAdd" tabindex="-1" aria-labelledby="frmAddLabel" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="frmAddLabel">添加</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="dateRecord">日期</label>
+                                <div class="col-sm-10">
+                                    <input type="date" class="form-control" id="dateRecord" placeholder="记录日期" v-model="detail.date" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="dropdownMenuButton">流向</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="drpUseWay" v-model="detail.isSpend">
+                                        <option value="true" selected="selected">出账</option>
+                                        <option value="false">入账</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="txtContent">花销内容</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="txtContent" placeholder="记录日期" v-model="detail.useWay" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="txtUseAmount">金额</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="txtUseAmount" placeholder="金额" v-model="detail.useAmount" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="addItem()">添加</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>&copy; 2018 - MoneyBook</p>
+        </footer>
+    </div>
+</body>
+</html>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            infos: [],
+            detail: { useWay: "", useAmount: 0, date: new Date(), isSpend: true }
+        },
+        created: function () {
+            this.$http.post("/Day/GetCurrentMonth", { date: new Date() }, { emulateJSON: true }).then(function (res) {
+                this.infos = res.body;
+                console.log(infos[0].detail[0]);
+            });
+        },
+        methods: {
+            deleteDetail: function (i, k) {
+                this.infos[i].detail[k].isDelete = true;
+            },
+            showTD: function (i, k) {
+                var arr = this.infos[i].detail;
+                for (var j = 0; j < k; j++) {
+                    if (arr[j].isDelete === false) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            addItem: function () {
+                var isSpendShow = "";
+                if (this.detail.isSpend) {
+                    isSpendShow = "出账";
+                }
+                else {
+                    isSpendShow = "入账";
+                }
+                var det = {
+                    isSpend: this.detail.isSpend,
+                    useAmount: this.detail.useAmount,
+                    isDelete: false,
+                    date: this.detail.date,
+                    useWay: this.detail.useWay,
+                    isSpendShow: isSpendShow
+                };
+                var tempDate = new Date(this.detail.date);
+                this.detail = { conent: "", useAmount: 0, useWay: "", date: new Date(), isSpend: true };
+
+                for (var i = 0; i < this.infos.length; i++) {
+                    var date = new Date(this.infos[i].date);
+
+                    if (date.getFullYear() === tempDate.getFullYear() &&
+                        date.getMonth() === tempDate.getMonth() &&
+                        date.getDate() === tempDate.getDate()) {
+                        this.infos[i].detail.push(det);
+                        return;
+                    }
+                }
+                var obj = new Object();
+                obj.date = det.date;
+                obj.detail = [];
+                obj.detail.push(det);
+                Vue.set(this.infos, this.infos.length, obj);
+                this.infos.sort(function (a, b) {
+                    var dateA = new Date(a.date);
+                    var dateB = new Date(b.date);
+                    if (dateA < dateB) {
+                        return -1;
+                    }
+                    if (dateA === dateB) {
+                        return 0;
+                    }
+                    if (dateA > dateB) {
+                        return 1;
+                    }
+                });
+                console.log(this.infos);
+            },
+            saveData: function () {
+                this.$http.post("/Day/SaveData", { data: this.infos }, { emulateJSON: true }).then(function (res) {
+                    console.log(res);
+                    this.$http.post("/Day/GetCurrentMonth", { date: new Date() }, { emulateJSON: true }).then(function (res) {
+                        this.infos = res.body;
+                        console.log(infos[0].detail[0]);
+                    });
+                });
+            }
+        },
+        filters: {
+            dateFormat(val) {
+                var value = new Date(val);
+                var year = value.getFullYear();
+                var month = formatNumber(value.getMonth() + 1);
+                var day = formatNumber(value.getDate());
+                return year + '-' + month + '-' + day;
+
+            }
+        }
+    });
+    function formatNumber(int) {
+        if (int.toString().length < 2) {
+            return "0" + int.toString();
+        }
+        else {
+            return int;
+        }
+    }
+</script>
