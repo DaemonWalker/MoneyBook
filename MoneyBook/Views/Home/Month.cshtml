@@ -64,16 +64,21 @@
                                 <td>总金额</td>
                             </tr>
                         </thead>
-                        <tr v-for="(info,i) in infos">
-                            <td v-if="info.isSum===true" colspan="2">{{info.useWay}}</td>
-                            <td v-if="info.isSum!==true">{{info.useWay}}</td>
-                            <td v-if="info.isSum!==true" style="vertical-align:middle">
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'" :aria-valuenow="info.percent" aria-valuemin="0" aria-valuemax="100">{{info.percent}}%</div>
-                                </div>
-                            </td>
-                            <td>{{info.totalMoney}}</td>
-                        </tr>
+                        <tbody v-for="(info,i) in infos">
+                            <tr>
+                                <td v-if="info.isSum===true" colspan="2">{{info.useWay}}</td>
+                                <td v-if="info.isSum!==true">{{info.useWay}}</td>
+                                <td v-if="info.isSum!==true" style="vertical-align:middle">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'" :aria-valuenow="info.percent" aria-valuemin="0" aria-valuemax="100">{{info.percent}}%</div>
+                                    </div>
+                                </td>
+                                <td>{{info.totalMoney}}</td>
+                            </tr>
+                            <tr v-for="(detail in info.details)">
+                                <td></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
