@@ -5,7 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MoneyBook.DataBase
+namespace MoneyBook.DataRelation
 {
     public interface IDataRelation<T>
     {

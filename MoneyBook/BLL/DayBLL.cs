@@ -48,7 +48,15 @@ namespace MoneyBook.BLL
             {
                 var day = new DayModel();
                 day.Date = kv.Key;
-                day.Detail = kv.Select(p => new MoneyShowModel() { ID = p.MoneyID, IsSpend = p.IsSpend, UseAmount = p.UseAmount, UseWay = p.UseWay }).ToList<MoneyModel>();
+                var totalMoney = kv.Sum(p => p.UseAmount);
+                day.Detail = kv.Select(p => new MoneyShowModel()
+                {
+                    ID = p.MoneyID,
+                    IsSpend = p.IsSpend,
+                    UseAmount = p.UseAmount,
+                    UseWay = p.UseWay,
+                    Percent = Math.Round( p.UseAmount * 100 / totalMoney, 2)
+                }).ToList<MoneyModel>();
 
                 list.Add(day);
             }

@@ -16,6 +16,11 @@ namespace MoneyBook.Controllers
             return View();
         }
 
+        public IActionResult Month()
+        {
+            return View();
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

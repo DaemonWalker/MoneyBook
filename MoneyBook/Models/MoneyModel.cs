@@ -38,5 +38,11 @@ namespace MoneyBook.Models
         /// </summary>
         [DataMember]
         public bool IsDelete { get; set; } = false;
+
+        /// <summary>
+        /// 所占当日开销百分比
+        /// </summary>
+        [DataMember]
+        public double Percent { get; set; }
     }
 }
