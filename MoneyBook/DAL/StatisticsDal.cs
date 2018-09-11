@@ -24,5 +24,21 @@ SELECT T2.USE_WAY,
 
             return this.DataAccess.QueryData(sql, new MonthRelation());
         }
+
+        public List<MoneyEntity> GetMonthDetail(DateTime month,string useWay)
+        {
+            var sql = @"
+SELECT T1.DATE,
+       T.USE_AMOUNT
+  FROM MONEY_INFO T
+       INNER JOIN
+       DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID
+ WHERE T1.DATE LIKE '{0}%' AND 
+       T.USE_WAY = '{1}'
+ ORDER BY T1.DATE;";
+            sql = string.Format(sql, month.ToString("yyyyMM"), useWay);
+
+            return this.DataAccess.QueryData(sql, new MonthDetailRelation());
+        }
     }
 }

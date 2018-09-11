@@ -64,19 +64,45 @@
                                 <td>总金额</td>
                             </tr>
                         </thead>
-                        <tbody v-for="(info,i) in infos">
+                        <tbody v-for="(info,i) in infos" v-on:click="getDetail(i)">
                             <tr>
                                 <td v-if="info.isSum===true" colspan="2">{{info.useWay}}</td>
                                 <td v-if="info.isSum!==true">{{info.useWay}}</td>
                                 <td v-if="info.isSum!==true" style="vertical-align:middle">
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'" :aria-valuenow="info.percent" aria-valuemin="0" aria-valuemax="100">{{info.percent}}%</div>
+                                        <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'"
+                                             :aria-valuenow="info.percent" aria-valuemin="0" aria-valuemax="100">
+                                            {{info.percent}}%
+                                        </div>
                                     </div>
                                 </td>
                                 <td>{{info.totalMoney}}</td>
                             </tr>
-                            <tr v-for="(detail in info.details)">
-                                <td></td>
+                            <tr v-if="info.isSum!==true" :class="{active:showTD(i)}">
+                                <td colspan="3" style="padding:0px" class="container">
+                                    <table class="table table-hover" style="margin:0px">
+                                        <thead>
+                                            <tr class="row col-10 offset-2" style="padding:0px">
+                                                <th class="col-3">日期</th>
+                                                <th class="col-3">当日金额</th>
+                                                <th class="col">百分比</th>
+                                            </tr>
+                                        </thead>
+                                        <tr v-for="detail in info.detail" class="row col-10 offset-2" style="padding:0px">
+                                            <td class="col-3">{{detail.date|dateFormat}}</td>
+                                            <td class="col-3">{{detail.useAmount}}</td>
+                                            <td style="vertical-align:middle" class="col">
+                                                <div class="progress" style="vertical-align:middle">
+                                                    <div class="progress-bar bg-success" role="progressbar"
+                                                         :style="'width:'+ detail.percent+'%'" :aria-valuenow="detail.percent"
+                                                         aria-valuemin="0" aria-valuemax="100">
+                                                        {{detail.percent}}%
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -102,10 +128,24 @@
         created: function () {
             this.$http.post("/Statistics/Month", { date: new Date().toLocaleDateString() }, { emulateJSON: true }).then(function (res) {
                 this.infos = res.body;
-                console.log(infos[0].detail[0]);
+                console.log(this.infos[0].detail);
             });
         },
         methods: {
+            getDetail: function (i) {
+                this.infos[i].showDetail = !this.infos[i].showDetail;
+                if (this.infos[i].showDetail) {
+                    this.$http.post("/Statistics/GetMonthDetail",
+                        { date: new Date().toLocaleDateString(), useWay: this.infos[i].useWay },
+                        { emulateJSON: true }).then(function (res) {
+                            this.infos[i].detail = res.body;
+                            console.log(res.body);
+                        });
+                }
+            },
+            showTD: function (i) {
+                return !this.infos[i].showDetail;
+            }
         },
         filters: {
             dateFormat(val) {

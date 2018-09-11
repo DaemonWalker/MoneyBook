@@ -14,8 +14,7 @@ namespace MoneyBook.DataRelation
         public DayEntity DataReaderToEntity(DbDataReader dataReader)
         {
             var day = new DayEntity();
-            var date = Convert.ToInt32(dataReader.GetString(0));
-            day.Date = new DateTime(date / 10000, date % 1000 / 100, date % 100);
+            day.Date = dataReader.GetString(0).ConvertToDateTime();
             day.MoneyID = dataReader.GetString(1);
             day.IsSpend = dataReader.GetString(2) == "0" ? false : true;
             day.UseWay = dataReader.GetString(3);
