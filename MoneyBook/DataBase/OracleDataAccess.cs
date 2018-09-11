@@ -1,27 +1,24 @@
-﻿using Microsoft.Data.Sqlite;
-using MoneyBook.Utils;
+﻿using MoneyBook.Utils;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MoneyBook.DataBase
 {
-    public class MSSqliteDataAccess : DataAccess
+    public class OracleDataAccess : DataAccess
     {
-        public MSSqliteDataAccess() : base($"Data Source={Path.Combine(Directory.GetParent(AppContext.BaseDirectory).FullName, AppSettings.SQLite)};") { }
+        public OracleDataAccess() : base(AppSettings.Oracle) { }
         protected override void CreateConnection()
         {
-            this.Connection = new SqliteConnection(this.ConnectionString);
-            SQLitePCL.Batteries.Init();
+            this.Connection = new OracleConnection();
             this.Connection.Open();
         }
 
-        [NotImplemented]
         protected override void CreateDataAdapter(string sql)
         {
-            throw new NotImplementedException();
+            this.DataAdapter = new OracleDataAdapter(sql, this.ConnectionString);
         }
 
         protected override void CreateDataReader(string sql)

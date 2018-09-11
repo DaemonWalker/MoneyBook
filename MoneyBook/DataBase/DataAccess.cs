@@ -18,9 +18,9 @@ namespace MoneyBook.DataBase
         protected DbDataAdapter DataAdapter { get; set; }
         protected DbDataReader DataReader { get; set; }
         protected readonly string ConnectionString;
-        protected DataAccess()
+        protected DataAccess(string connStr)
         {
-            this.ConnectionString = $"Data Source={Path.Combine(Directory.GetParent(AppContext.BaseDirectory).FullName, AppSettings.ConnectionString)};";
+            this.ConnectionString = connStr;
         }
 
         public void Dispose()
@@ -58,7 +58,8 @@ namespace MoneyBook.DataBase
         public List<T> QueryData<T>(string sql, IDataRelation<T> relation)
         {
             var list = new List<T>();
-            if (NotImplementedAttribute.IsMethodNotImplemented(this.GetType().Name, "CreateDataAdapter") == false)
+            if (NotImplementedAttribute.IsMethodNotImplemented(this.GetType().Name, "CreateDataAdapter") == false &&
+                NotImplementedAttribute.IsMethodNotImplemented(relation.GetType().Name, "DataRowToEntity") == false)
             {
                 this.CreateDataAdapter(sql);
                 var dt = new DataTable();
@@ -71,7 +72,8 @@ namespace MoneyBook.DataBase
                 return list;
             }
 
-            if (NotImplementedAttribute.IsMethodNotImplemented(this.GetType().Name, "CreateDataReader") == false)
+            if (NotImplementedAttribute.IsMethodNotImplemented(this.GetType().Name, "CreateDataReader") == false &&
+                NotImplementedAttribute.IsMethodNotImplemented(relation.GetType().Name, "DataReaderToEntity") == false)
             {
                 this.CreateDataReader(sql);
                 while (this.DataReader.Read())

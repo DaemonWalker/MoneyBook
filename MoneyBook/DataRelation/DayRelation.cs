@@ -26,10 +26,10 @@ namespace MoneyBook.DataRelation
         public DayEntity DataRowToEntity(DataRow dr)
         {
             var day = new DayEntity();
-            day.Date = Convert.ToDateTime(dr["DATE"].ToString());
+            day.Date = dr["DATE"].ToString().ConvertToDateTime();
             day.IsSpend = dr["SPEND_FLAG"].ToString() == "0" ? false : true;
             day.UseWay = dr["USE_WAY"].ToString();
-            day.UseAmount = Convert.ToDouble(dr["USE_AOUNT"].ToString());
+            day.UseAmount = Convert.ToDouble(dr["USE_AMOUNT"].ToString());
             day.MoneyID = dr["MONEYINFO_ID"].ToString();
 
             return day;

@@ -35,7 +35,7 @@ namespace MoneyBook.Utils
                         info.Add($"{type.Name}.CreateDataReader", true);
                     }
                 }
-                if (typeof(IDataRelation<>).IsAssignableFrom(type))
+                if (type.GetInterfaces().Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IDataRelation<>)).Count() > 0)
                 {
                     var attr = Attribute.GetCustomAttribute(
                         type.GetMethod("DataRowToEntity"), typeof(NotImplementedAttribute)) as NotImplementedAttribute;

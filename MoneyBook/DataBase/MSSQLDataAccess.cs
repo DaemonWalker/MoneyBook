@@ -1,27 +1,24 @@
-﻿using Microsoft.Data.Sqlite;
-using MoneyBook.Utils;
+﻿using MoneyBook.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MoneyBook.DataBase
 {
-    public class MSSqliteDataAccess : DataAccess
+    public class MSSQLDataAccess : DataAccess
     {
-        public MSSqliteDataAccess() : base($"Data Source={Path.Combine(Directory.GetParent(AppContext.BaseDirectory).FullName, AppSettings.SQLite)};") { }
+        public MSSQLDataAccess() : base(AppSettings.MSSQL) { }
         protected override void CreateConnection()
         {
-            this.Connection = new SqliteConnection(this.ConnectionString);
-            SQLitePCL.Batteries.Init();
+            this.Connection = new SqlConnection(this.ConnectionString);
             this.Connection.Open();
         }
 
-        [NotImplemented]
         protected override void CreateDataAdapter(string sql)
         {
-            throw new NotImplementedException();
+            this.DataAdapter = new SqlDataAdapter(sql, this.ConnectionString);
         }
 
         protected override void CreateDataReader(string sql)
@@ -29,7 +26,7 @@ namespace MoneyBook.DataBase
             this.CreateConnection();
             var comm = this.Connection.CreateCommand();
             comm.CommandText = sql;
-            this.DataReader = comm.ExecuteReader();
+            comm.ExecuteReader();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace MoneyBook.Controllers
         public IActionResult GetCurrentMonth(DateTime date)
         {
             var day = bll.QueryMonthInfo(DateTime.Now);
-            return Json(day);
+            return Json(day); 
         }
 
         [HttpPost]

@@ -13,9 +13,11 @@ namespace MoneyBook.Utils
         {
             services.Add(new ServiceDescriptor(typeof(AppSettings), typeof(AppSettings), ServiceLifetime.Singleton));
             //读取配置文件
-            AppSettings.ConnectionString = config["DataSource:ConnectionString"];
+            AppSettings.SQLite = config["DataSource:SQLite"];
             AppSettings.DataBase = config["DataSource:DataBase"];
-
+            AppSettings.MySql = config["DataSource:MySql"];
+            AppSettings.MSSQL= config["DataSource:MSSQL"];
+            AppSettings.Oracle = config["DataSource:Oracle"];
         }
     }
 }
