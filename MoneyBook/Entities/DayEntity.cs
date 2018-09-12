@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoneyBook.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -13,7 +14,7 @@ namespace MoneyBook.Entities
         public DateTime Date { get; set; }
 
         [DataMember]
-        public bool IsSpend { get; set; }
+        public IOEnum IsSpend { get; set; }
 
         [DataMember]
         public string UseWay { get; set; }

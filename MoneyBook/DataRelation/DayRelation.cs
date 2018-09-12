@@ -1,5 +1,6 @@
 ﻿using MoneyBook.DataBase;
 using MoneyBook.Entities;
+using MoneyBook.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +17,7 @@ namespace MoneyBook.DataRelation
             var day = new DayEntity();
             day.Date = dataReader.GetString(0).ConvertToDateTime();
             day.MoneyID = dataReader.GetString(1);
-            day.IsSpend = dataReader.GetString(2) == "0" ? false : true;
+            day.IsSpend = Enum.Parse<IOEnum>(dataReader.GetString(2));
             day.UseWay = dataReader.GetString(3);
             day.UseAmount = dataReader.GetDouble(4);
 
@@ -27,7 +28,7 @@ namespace MoneyBook.DataRelation
         {
             var day = new DayEntity();
             day.Date = dr["DATE"].ToString().ConvertToDateTime();
-            day.IsSpend = dr["SPEND_FLAG"].ToString() == "0" ? false : true;
+            day.IsSpend = Enum.Parse<IOEnum>(dr["IO_FLAG"].ToString());
             day.UseWay = dr["USE_WAY"].ToString();
             day.UseAmount = Convert.ToDouble(dr["USE_AMOUNT"].ToString());
             day.MoneyID = dr["MONEYINFO_ID"].ToString();

@@ -16,7 +16,7 @@ namespace MoneyBook.DAL
             var sql = @"
 SELECT T.DATE,
        T1.MONEYINFO_ID,
-       T1.SPEND_FLAG,
+       T1.IO_FLAG,
        T1.USE_WAY,
        T1.USE_AMOUNT
   FROM DAY_INFO T
@@ -44,7 +44,7 @@ SELECT T.DATE,
                                             );";
                 var sql = @"
             INSERT INTO MONEY_INFO (
-                                       SPEND_FLAG,
+                                       IO_FLAG,
                                        USE_WAY,
                                        USE_AMOUNT,
                                        DAY_ID
@@ -59,7 +59,7 @@ SELECT T.DATE,
                 {
                     command.CommandText = string.Format(daySql, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
-                    command.CommandText = string.Format(sql, money.IsSpend ? "1" : "0", money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
+                    command.CommandText = string.Format(sql, money.IOFlag.ToString(), money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
                 }
             });

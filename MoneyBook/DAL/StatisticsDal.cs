@@ -21,7 +21,7 @@ FROM
 	INNER JOIN MONEY_INFO T2 ON T.DAY_ID = T2.DAY_ID 
 WHERE
 	T.DATE LIKE '{0}%' 
-	AND T2.SPEND_FLAG = '1' 
+	AND T2.IO_FLAG = 'O' 
 GROUP BY
 	T2.USE_WAY 
 ORDER BY
@@ -43,7 +43,7 @@ FROM
 WHERE
 	T1.DATE LIKE '{0}%' 
 	AND T.USE_WAY = '{1}' 
-	AND T.SPEND_FLAG = '1' 
+	AND T.IO_FLAG = 'O' 
 ORDER BY
 	T1.DATE";
             sql = string.Format(sql, month.ToString(AppSettings.MonthFormat), useWay);
@@ -66,12 +66,13 @@ FROM
 		DAY_INFO T
 		INNER JOIN MONEY_INFO T1 ON T.DAY_ID = T1.DAY_ID 
 	WHERE
-		T1.SPEND_FLAG = '1' 
+		T1.IO_FLAG = 'O' 
 	ORDER BY
 		T.DATE 
 	) TAB 
 GROUP BY
 	WEEK";
+            return null;
         }
     }
 }

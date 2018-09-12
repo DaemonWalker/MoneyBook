@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoneyBook.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -10,7 +11,7 @@ namespace MoneyBook.Entities
     public class MoneyEntity
     {
         [DataMember]
-        public bool IsSpend { get; set; }
+        public IOEnum IOFlag { get; set; }
 
         [DataMember]
         public string UseWay { get; set; }

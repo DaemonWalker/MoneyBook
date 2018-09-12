@@ -1,5 +1,6 @@
 ﻿using MoneyBook.DAL;
 using MoneyBook.Entities;
+using MoneyBook.Enums;
 using MoneyBook.Models;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace MoneyBook.BLL
                         addList.Add(new MoneyEntity()
                         {
                             Date = day.Date,
-                            IsSpend = money.IsSpend,
+                            IOFlag = money.IsSpend ? IOEnum.O : IOEnum.I,
                             UseAmount = money.UseAmount,
                             UseWay = money.UseWay
                         });
@@ -51,10 +52,10 @@ namespace MoneyBook.BLL
                 day.Detail = kv.Select(p => new MoneyShowModel()
                 {
                     ID = p.MoneyID,
-                    IsSpend = p.IsSpend,
+                    IsSpend = p.IsSpend == IOEnum.O,
                     UseAmount = p.UseAmount,
                     UseWay = p.UseWay,
-                    Percent = Math.Round( p.UseAmount * 100 / totalMoney, 2)
+                    Percent = Math.Round(p.UseAmount * 100 / totalMoney, 2)
                 }).ToList<MoneyModel>();
 
                 list.Add(day);
