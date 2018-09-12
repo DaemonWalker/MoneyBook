@@ -18,6 +18,8 @@ namespace MoneyBook.Utils
             AppSettings.MySql = config["DataSource:MySql"];
             AppSettings.MSSQL= config["DataSource:MSSQL"];
             AppSettings.Oracle = config["DataSource:Oracle"];
+            AppSettings.DayFormat= config["DataSource:DayFormat"];
+            AppSettings.MonthFormat = config["DataSource:MonthFormat"];
         }
     }
 }

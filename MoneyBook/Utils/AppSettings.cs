@@ -12,5 +12,7 @@ namespace MoneyBook.Utils
         public static string MySql { get; set; }
         public static string MSSQL { get; set; }
         public static string Oracle { get; set; }
+        public static string MonthFormat { get; set; }
+        public static string DayFormat { get; set; }
     }
 }

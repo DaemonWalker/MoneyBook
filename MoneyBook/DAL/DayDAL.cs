@@ -1,6 +1,7 @@
 ﻿using MoneyBook.DataBase;
 using MoneyBook.DataRelation;
 using MoneyBook.Entities;
+using MoneyBook.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ SELECT T.DATE,
        INNER JOIN
        MONEY_INFO T1 ON T.DAY_ID = T1.DAY_ID
  WHERE T.DATE LIKE '{0}%';";
-            sql = string.Format(sql, month.ToString("yyyyMM"));
+            sql = string.Format(sql, month.ToString(AppSettings.MonthFormat));
 
             return this.DataAccess.QueryData(sql, new DayRelation());
         }
@@ -56,9 +57,9 @@ SELECT T.DATE,
                                     WHERE T.DATE = '{3}';";
                 foreach (var money in moneys)
                 {
-                    command.CommandText = string.Format(daySql, money.Date.ToString("yyyyMMdd"));
+                    command.CommandText = string.Format(daySql, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
-                    command.CommandText = string.Format(sql, money.IsSpend ? "1" : "0", money.UseWay, money.UseAmount, money.Date.ToString("yyyyMMdd"));
+                    command.CommandText = string.Format(sql, money.IsSpend ? "1" : "0", money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
                 }
             });
