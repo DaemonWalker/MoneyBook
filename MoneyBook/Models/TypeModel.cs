@@ -5,18 +5,21 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MoneyBook.Entities
+namespace MoneyBook.Models
 {
     [DataContract]
-    public class TypeEntity
+    public class TypeModel : IOModel
     {
         [DataMember]
-        public int ID { get; set; }
+        public string ID { get; set; }
 
         [DataMember]
         public string Name { get; set; }
 
         [DataMember]
-        public IOEnum IOFlag { get; set; }
+        public bool IsModify { get; set; }
+
+        [DataMember]
+        public bool IsDelete { get; set; }
     }
 }

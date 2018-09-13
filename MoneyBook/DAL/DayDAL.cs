@@ -14,15 +14,21 @@ namespace MoneyBook.DAL
         public List<DayEntity> QueryByMonth(DateTime month)
         {
             var sql = @"
-SELECT T.DATE,
-       T1.MONEYINFO_ID,
-       T1.IO_FLAG,
-       T1.USE_WAY,
-       T1.USE_AMOUNT
-  FROM DAY_INFO T
-       INNER JOIN
-       MONEY_INFO T1 ON T.DAY_ID = T1.DAY_ID
- WHERE T.DATE LIKE '{0}%';";
+SELECT
+	T.DATE,
+	T1.MONEYINFO_ID,
+	T2.IO_FLAG,
+	T1.USE_WAY,
+	T1.USE_AMOUNT,
+	T2.TYPE_NAME 
+FROM
+	DAY_INFO T
+	INNER JOIN MONEY_INFO T1 ON T.DAY_ID = T1.DAY_ID
+	INNER JOIN TYPE_INFO T2 ON T2.TYPE_ID = T1.TYPE_ID 
+WHERE
+	T.DATE LIKE '{0}%' 
+ORDER BY
+	T.DATE";
             sql = string.Format(sql, month.ToString(AppSettings.MonthFormat));
 
             return this.DataAccess.QueryData(sql, new DayRelation());
@@ -44,7 +50,7 @@ SELECT T.DATE,
                                             );";
                 var sql = @"
             INSERT INTO MONEY_INFO (
-                                       IO_FLAG,
+                                       TYPE_ID,
                                        USE_WAY,
                                        USE_AMOUNT,
                                        DAY_ID
@@ -59,7 +65,7 @@ SELECT T.DATE,
                 {
                     command.CommandText = string.Format(daySql, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
-                    command.CommandText = string.Format(sql, money.IOFlag.ToString(), money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
+                    command.CommandText = string.Format(sql, money.UseTypeID, money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
                 }
             });

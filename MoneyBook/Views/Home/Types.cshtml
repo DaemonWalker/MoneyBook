@@ -1,0 +1,225 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MoneyBook</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/vue/vue.min.js"></script>
+    <script src="~/lib/vue/vue-resource.min.js"></script>
+    <style>
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr {
+            text-align: center
+        }
+
+        .active {
+            display: none
+        }
+
+        body {
+            font-family: 'Inziu Iosevka SC';
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="/">记账簿</a>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="javascript:void(0)">主页<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            操作
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="javascript:void(0)" v-on:click="showAddModal()">添加</a>
+                            <a class="dropdown-item" href="javascript:void(0)" v-on:click="saveData()">保存</a>
+                        </div>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="margin-top:70px">
+            <div class="container">
+                <div class="row"></div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>类型名称</td>
+                                <td>流向</td>
+                                <td>操作</td>
+                            </tr>
+                        </thead>
+                        <tr v-for="(info,i) in this.infos">
+                            <td>{{info.name}}</td>
+                            <td>{{info.ioFlagShow}}</td>
+                            <td>
+                                <a href="javascript:void(0)" v-on:click="deleteDetail(i)">删除</a>
+                                <a href="javascript:void(0)" v-on:click="showModifyModal(i)">修改</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="modal" id="frmAdd" tabindex="-1" aria-labelledby="frmAddLabel" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="frmAddLabel">{{title}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="form-group row">
+                                <label class="col col-form-label" for="dropdownMenuButton">流向</label>
+                                <div class="col-8">
+                                    <select class="form-control" id="drpUseWay" v-model="detail.ioFlag">
+                                        <option value="O" selected="selected">出账</option>
+                                        <option value="I">入账</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col col-form-label" for="txtUseAmount">收支类型</label>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="txtName" placeholder="金额" v-model="detail.name" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" v-on:click="editItem()">{{title}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar fixed-bottom navbar-light bg-light">
+        <hr />
+        <div class="container" style="text-align:center;vertical-align:middle">
+            <p style="margin-bottom:0px">&copy; 2018 - MoneyBook</p>
+        </div>
+    </nav>
+</body>
+</html>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            infos: [],
+            detail: { name: '', ioFlag: 'O' },
+            title: '',
+            modifyIndex: 0
+        },
+        created: function () {
+            this.$http.post("/Type/Query", {}, { emulateJSON: true }).then(function (res) {
+                this.infos = res.body;
+                console.log(res.body);
+            });
+        },
+        methods: {
+            deleteDetail: function (i) {
+                this.infos[i].detail[k].isDelete = true;
+            },
+            showAddModal: function () {
+                this.title = "新建";
+                this.detail = { name: '', ioFlag: 'O' };
+                $("#frmAdd").modal('show');
+                this.editItem = this.addItem;
+            },
+            showModifyModal: function (i) {
+                this.modifyIndex = i;
+                this.detail = this.infos[i];
+
+                this.title = "修改";
+                $("#frmAdd").modal('show');
+                this.editItem = this.modifyItem;
+            },
+            editItem: function () { },
+            addItem: function () {
+                var ioFlagShow = "";
+                if (this.detail.ioFlag === "O") {
+                    ioFlagShow = "出账";
+                }
+                else {
+                    ioFlagShow = "入账";
+                }
+                var det = {
+                    ioFlag: this.detail.ioFlag,
+                    name: this.detail.name,
+                    isDelete: false,
+                    isModify: false,
+                    ioFlagShow: ioFlagShow
+                };
+                var tempDate = new Date(this.detail.date);
+                this.detail = { name: '', ioFlag: 'O', isModify: false, isDelete: false };
+
+                for (var i = 0; i < this.infos.length; i++) {
+                    if (this.infos[i].name === det.name) {
+                        return;
+                    }
+                }
+                this.infos.push(det);
+                console.log(this.infos);
+            },
+            modifyItem: function () {
+                this.infos[this.modifyIndex] = this.detail;
+            },
+            saveData: function () {
+                this.$http.post("/Type/Check", { typeModels: this.infos }, { emulateJSON: true }).then(function (res) {
+                    console.log(res);
+                    this.$http.post("/Type/Query", {}, { emulateJSON: true }).then(function (res) {
+                        this.infos = res.body;
+                        console.log(infos[0].detail[0]);
+                    });
+                });
+            }
+        },
+        filters: {
+            dateFormat(val) {
+                var value = new Date(val);
+                var year = value.getFullYear();
+                var month = formatNumber(value.getMonth() + 1);
+                var day = formatNumber(value.getDate());
+                return year + '-' + month + '-' + day;
+
+            }
+        }
+    });
+    function formatNumber(int) {
+        if (int.toString().length < 2) {
+            return "0" + int.toString();
+        }
+        else {
+            return int;
+        }
+    }
+</script>

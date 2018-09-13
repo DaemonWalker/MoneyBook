@@ -14,8 +14,9 @@ namespace MoneyBook.DataRelation
         public MonthEntity DataReaderToEntity(DbDataReader dataReader)
         {
             var month = new MonthEntity();
-            month.UseWay = dataReader.GetString(0);
+            month.UseType = dataReader.GetString(0);
             month.TotalMoney = dataReader.GetDouble(1);
+            month.UseTypeID = dataReader.GetString(2);
             return month;
         }
 

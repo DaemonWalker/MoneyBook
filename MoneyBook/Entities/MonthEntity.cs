@@ -10,9 +10,12 @@ namespace MoneyBook.Entities
     public class MonthEntity
     {
         [DataMember]
-        public string UseWay { get; set; }
+        public string UseType { get; set; }
 
         [DataMember]
         public double TotalMoney { get; set; }
+
+        [DataMember]
+        public string UseTypeID { get; set; }
     }
 }

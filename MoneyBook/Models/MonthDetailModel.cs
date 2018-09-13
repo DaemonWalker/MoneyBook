@@ -17,5 +17,8 @@ namespace MoneyBook.Models
 
         [DataMember]
         public double Percent { get; set; }
+
+        [DataMember]
+        public string UseWay { get; set; }
     }
 }

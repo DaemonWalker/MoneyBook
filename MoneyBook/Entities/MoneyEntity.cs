@@ -21,5 +21,9 @@ namespace MoneyBook.Entities
 
         [DataMember]
         public DateTime Date { get; set; }
+
+        [DataMember]
+        public string UseTypeID { get; set; }
+        
     }
 }

@@ -50,5 +50,10 @@ namespace MoneyBook.Controllers
         {
             return View();
         }
+
+        public IActionResult Types()
+        {
+            return View();
+        }
     }
 }

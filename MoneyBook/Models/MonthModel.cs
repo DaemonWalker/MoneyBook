@@ -23,7 +23,13 @@ namespace MoneyBook.Models
         public bool IsSum { get; set; }
 
         [DataMember]
-        public bool ShowDetail { get; set; } = false;
+        public bool ShowDetail { get; set; }
+
+        [DataMember]
+        public string UseType { get; set; }
+
+        [DataMember]
+        public string UseTypeID { get; set; }
 
         [DataMember]
         public List<MonthDetailModel> Detail { get; set; } = new List<MonthDetailModel>();

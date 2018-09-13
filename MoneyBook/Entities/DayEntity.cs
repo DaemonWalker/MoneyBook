@@ -14,7 +14,7 @@ namespace MoneyBook.Entities
         public DateTime Date { get; set; }
 
         [DataMember]
-        public IOEnum IsSpend { get; set; }
+        public IOEnum IOFlag { get; set; }
 
         [DataMember]
         public string UseWay { get; set; }
@@ -24,5 +24,8 @@ namespace MoneyBook.Entities
 
         [DataMember]
         public string MoneyID { get; set; }
+
+        [DataMember]
+        public string UseType { get; set; }
     }
 }

@@ -14,16 +14,19 @@ namespace MoneyBook.DAL
         {
             var sql = @"
 SELECT
-	T2.USE_WAY,
-	SUM( T2.USE_AMOUNT ) AS TOTAL_AMOUNT 
+	T3.TYPE_NAME,
+	SUM( T2.USE_AMOUNT ) AS TOTAL_AMOUNT,
+	T3.TYPE_ID 
 FROM
 	DAY_INFO T
-	INNER JOIN MONEY_INFO T2 ON T.DAY_ID = T2.DAY_ID 
+	INNER JOIN MONEY_INFO T2 ON T.DAY_ID = T2.DAY_ID
+	INNER JOIN TYPE_INFO T3 ON T2.TYPE_ID = T3.TYPE_ID 
 WHERE
 	T.DATE LIKE '{0}%' 
-	AND T2.IO_FLAG = 'O' 
+	AND T3.IO_FLAG = 'O' 
 GROUP BY
-	T2.USE_WAY 
+	T3.TYPE_ID,
+	T3.TYPE_NAME 
 ORDER BY
 	TOTAL_AMOUNT DESC";
             sql = string.Format(sql, month.ToString(AppSettings.MonthFormat));
@@ -31,22 +34,24 @@ ORDER BY
             return this.DataAccess.QueryData(sql, new MonthRelation());
         }
 
-        public List<MoneyEntity> GetMonthDetail(DateTime month,string useWay)
+        public List<MoneyEntity> GetMonthDetail(DateTime month,string typeID)
         {
             var sql = @"
 SELECT
 	T1.DATE,
-	T.USE_AMOUNT 
+	T.USE_AMOUNT,
+	T.USE_WAY 
 FROM
 	MONEY_INFO T
-	INNER JOIN DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID 
+	INNER JOIN DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID
+	INNER JOIN TYPE_INFO T3 ON T.TYPE_ID = T3.TYPE_ID 
 WHERE
 	T1.DATE LIKE '{0}%' 
-	AND T.USE_WAY = '{1}' 
-	AND T.IO_FLAG = 'O' 
+	AND T.TYPE_ID = '{1}' 
+	AND T3.IO_FLAG = 'O' 
 ORDER BY
 	T1.DATE";
-            sql = string.Format(sql, month.ToString(AppSettings.MonthFormat), useWay);
+            sql = string.Format(sql, month.ToString(AppSettings.MonthFormat), typeID);
 
             return this.DataAccess.QueryData(sql, new MonthDetailRelation());
         }

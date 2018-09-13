@@ -66,8 +66,8 @@
                         </thead>
                         <tbody v-for="(info,i) in infos" v-on:click="getDetail(i)">
                             <tr>
-                                <td v-if="info.isSum===true" colspan="2">{{info.useWay}}</td>
-                                <td v-if="info.isSum!==true">{{info.useWay}}</td>
+                                <td v-if="info.isSum===true" colspan="2">{{info.useType}}</td>
+                                <td v-if="info.isSum!==true">{{info.useType}}</td>
                                 <td v-if="info.isSum!==true" style="vertical-align:middle">
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'"
@@ -83,14 +83,16 @@
                                     <table class="table table-hover" style="margin:0px">
                                         <thead>
                                             <tr class="row col-10 offset-2" style="padding:0px">
-                                                <th class="col-3">日期</th>
-                                                <th class="col-3">当日金额</th>
+                                                <th class="col-2">日期</th>
+                                                <th class="col-2">内容</th>
+                                                <th class="col-2">金额</th>
                                                 <th class="col">百分比</th>
                                             </tr>
                                         </thead>
                                         <tr v-for="detail in info.detail" class="row col-10 offset-2" style="padding:0px">
-                                            <td class="col-3">{{detail.date|dateFormat}}</td>
-                                            <td class="col-3">{{detail.useAmount}}</td>
+                                            <td class="col-2">{{detail.date|dateFormat}}</td>
+                                            <td class="col-2">{{detail.useWay}}</td>
+                                            <td class="col-2">{{detail.useAmount}}</td>
                                             <td style="vertical-align:middle" class="col">
                                                 <div class="progress" style="vertical-align:middle">
                                                     <div class="progress-bar bg-success" role="progressbar"
@@ -122,8 +124,7 @@
     var app = new Vue({
         el: "#app",
         data: {
-            infos: [],
-            detail: { useWay: "", useAmount: 0, date: new Date(), isSpend: true }
+            infos: []
         },
         created: function () {
             this.$http.post("/Statistics/Month", { date: new Date().toLocaleDateString() }, { emulateJSON: true }).then(function (res) {
@@ -136,7 +137,7 @@
                 this.infos[i].showDetail = !this.infos[i].showDetail;
                 if (this.infos[i].showDetail) {
                     this.$http.post("/Statistics/GetMonthDetail",
-                        { date: new Date().toLocaleDateString(), useWay: this.infos[i].useWay },
+                        { date: new Date().toLocaleDateString(), typeID: this.infos[i].useTypeID },
                         { emulateJSON: true }).then(function (res) {
                             this.infos[i].detail = res.body;
                             console.log(res.body);

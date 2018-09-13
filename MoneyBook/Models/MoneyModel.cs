@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoneyBook.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,14 +8,8 @@ using System.Threading.Tasks;
 namespace MoneyBook.Models
 {
     [DataContract]
-    public class MoneyModel
+    public class MoneyModel : IOModel
     {
-        /// <summary>
-        /// 入账、出账
-        /// </summary>
-        [DataMember]
-        public bool IsSpend { get; set; } = true;
-
         /// <summary>
         /// 变动原因
         /// </summary>
@@ -37,12 +32,19 @@ namespace MoneyBook.Models
         /// 是否在前台删除
         /// </summary>
         [DataMember]
-        public bool IsDelete { get; set; } = false;
+        public bool IsDelete { get; set; }
 
         /// <summary>
         /// 所占当日开销百分比
         /// </summary>
         [DataMember]
         public double Percent { get; set; }
+
+        [DataMember]
+        public string UseType { get; set; }
+
+        [DataMember]
+        public string UseTypeID { get; set; }
+
     }
 }

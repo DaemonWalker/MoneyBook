@@ -17,9 +17,9 @@ namespace MoneyBook.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetMonthDetail(DateTime date, string useWay)
+        public IActionResult GetMonthDetail(DateTime date, string typeID)
         {
-            return Json(bll.GetMonthDetail(date, useWay));
+            return Json(bll.GetMonthDetail(date, typeID));
         }
 
         [HttpPost]

@@ -37,7 +37,7 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">记账簿</a>
+            <a class="navbar-brand" href="/home/index">记账簿</a>
 
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -51,6 +51,14 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" data-toggle="modal" data-target="#frmAdd" href="javascript:void(0)">添加</a>
                             <a class="dropdown-item" href="javascript:void(0)" v-on:click="saveData()">保存</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            数据
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/Home/Types">费用类型</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -78,6 +86,7 @@
                             <tr>
                                 <td>日期</td>
                                 <td>流向</td>
+                                <td>花销类型</td>
                                 <td>花销内容</td>
                                 <td>金额</td>
                                 <td>百分比</td>
@@ -89,7 +98,8 @@
                                 <td :rowspan="info.detail.length" v-bind:class="{active:showTD(i,k)}" style="vertical-align: middle;">
                                     {{info.date|dateFormat}}
                                 </td>
-                                <td>{{useInfo.isSpendShow}}</td>
+                                <td>{{useInfo.ioFlagShow}}</td>
+                                <td>{{useInfo.useType}}</td>
                                 <td>{{useInfo.useWay}}</td>
                                 <td>{{useInfo.useAmount}}</td>
                                 <td style="vertical-align:middle">
@@ -125,16 +135,24 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label" for="dropdownMenuButton">流向</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" id="drpUseWay" v-model="detail.isSpend">
-                                        <option value="true" selected="selected">出账</option>
-                                        <option value="false">入账</option>
+                                    <select class="form-control" id="drpUseWay" v-model="detail.ioFlag">
+                                        <option value="O">出账</option>
+                                        <option value="I">入账</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="dropdownMenuButton">花销类型</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="drpUseWay" v-model="detail.useTypeID">
+                                        <option v-for="(t,i) in types" :value="t.id">{{t.name}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label" for="txtContent">花销内容</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="txtContent" placeholder="记录日期" v-model="detail.useWay" />
+                                    <input type="text" class="form-control" id="txtContent" placeholder="花销内容" v-model="detail.useWay" />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -166,12 +184,20 @@
         el: "#app",
         data: {
             infos: [],
-            detail: { useWay: "", useAmount: 0, date: new Date().toLocaleDateString(), isSpend: true }
+            types: [],
+            detail: { useWay: "", useAmount: 0, date: new Date().toLocaleDateString(), ioFlag: 'O', useTypeID: '' },
+            drpIO: {},
+            drpType: {}
         },
         created: function () {
             this.$http.post("/Day/GetCurrentMonth", { date: new Date() }, { emulateJSON: true }).then(function (res) {
                 this.infos = res.body;
-                console.log(infos[0].detail[0]);
+                console.log(res.body);
+            });
+            this.$http.post("/Type/Query", {}, { emulateJSON: true }).then(function (res) {
+                this.types = res.body;
+                this.detail.useTypeID = this.types[0].id;
+                console.log(res.body);
             });
         },
         methods: {
@@ -188,23 +214,26 @@
                 return false;
             },
             addItem: function () {
-                var isSpendShow = "";
-                if (this.detail.isSpend) {
-                    isSpendShow = "出账";
+                console.log(this.detail.ioFlag);
+                var ioFlagShow = "";
+                if (this.detail.ioFlag) {
+                    ioFlagShow = "出账";
                 }
                 else {
-                    isSpendShow = "入账";
+                    ioFlagShow = "入账";
                 }
                 var det = {
-                    isSpend: this.detail.isSpend,
+                    ioFlag: this.detail.ioFlag,
                     useAmount: this.detail.useAmount,
                     isDelete: false,
                     date: this.detail.date,
                     useWay: this.detail.useWay,
-                    isSpendShow: isSpendShow
+                    ioFlagShow: ioFlagShow,
+                    useType: this.types.find(p => p.id === this.detail.useTypeID).name,
+                    useTypeID: this.detail.useTypeID
                 };
                 var tempDate = new Date(this.detail.date);
-                this.detail = { conent: "", useAmount: 0, useWay: "", date: new Date(), isSpend: true };
+                this.detail = { conent: "", useAmount: 0, useWay: "", date: new Date(), ioFlag: 'O', useTypeID: this.types[0].id };
 
                 for (var i = 0; i < this.infos.length; i++) {
                     var date = new Date(this.infos[i].date);

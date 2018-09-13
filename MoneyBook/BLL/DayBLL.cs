@@ -24,9 +24,10 @@ namespace MoneyBook.BLL
                         addList.Add(new MoneyEntity()
                         {
                             Date = day.Date,
-                            IOFlag = money.IsSpend ? IOEnum.O : IOEnum.I,
+                            IOFlag = money.IOFlag,
                             UseAmount = money.UseAmount,
-                            UseWay = money.UseWay
+                            UseWay = money.UseWay,
+                            UseTypeID = money.UseTypeID
                         });
                     }
                     else if (money.IsDelete)
@@ -49,13 +50,15 @@ namespace MoneyBook.BLL
                 var day = new DayModel();
                 day.Date = kv.Key;
                 var totalMoney = kv.Sum(p => p.UseAmount);
-                day.Detail = kv.Select(p => new MoneyShowModel()
+                day.Detail = kv.Select(p => new MoneyModel()
                 {
                     ID = p.MoneyID,
-                    IsSpend = p.IsSpend == IOEnum.O,
+                    IOFlag = p.IOFlag,
                     UseAmount = p.UseAmount,
                     UseWay = p.UseWay,
-                    Percent = Math.Round(p.UseAmount * 100 / totalMoney, 2)
+                    Percent = Math.Round(p.UseAmount * 100 / totalMoney, 2),
+                    IsDelete = false,
+                    UseType = p.UseType
                 }).ToList<MoneyModel>();
 
                 list.Add(day);

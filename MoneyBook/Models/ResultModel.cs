@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoneyBook.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -10,16 +11,16 @@ namespace MoneyBook.Models
     public class ResultModel
     {
         [DataMember]
-        public int OpStatus { get; set; }
+        public OpStatusEnum OpStatus { get; private set; }
 
         [DataMember]
-        public string Message { get; set; }
+        public string Message { get; private set; }
 
         public static ResultModel Success(string message)
         {
             return new ResultModel()
             {
-                OpStatus = 1,
+                OpStatus = OpStatusEnum.Success,
                 Message = message
             };
         }
@@ -28,7 +29,7 @@ namespace MoneyBook.Models
         {
             return new ResultModel()
             {
-                OpStatus = 0,
+                OpStatus = OpStatusEnum.Error,
                 Message = message
             };
         }
