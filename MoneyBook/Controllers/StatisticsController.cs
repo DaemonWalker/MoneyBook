@@ -23,9 +23,15 @@ namespace MoneyBook.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetWeekDetail(DateTime date)
+        public IActionResult Week(DateTime date)
         {
-            return null;
+            return Json(bll.Week(date));
+        }
+
+        [HttpPost]
+        public IActionResult GetWeekDetail(string weekIndex)
+        {
+            return Json(bll.GetWeekDetail(weekIndex));
         }
     }
 }

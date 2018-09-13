@@ -59,7 +59,7 @@ namespace MoneyBook.BLL
                     Percent = Math.Round(p.UseAmount * 100 / totalMoney, 2),
                     IsDelete = false,
                     UseType = p.UseType
-                }).ToList<MoneyModel>();
+                }).ToList();
 
                 list.Add(day);
             }

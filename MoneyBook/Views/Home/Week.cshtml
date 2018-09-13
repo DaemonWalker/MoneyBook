@@ -1,0 +1,162 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MoneyBook</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/vue/vue.min.js"></script>
+    <script src="~/lib/vue/vue-resource.min.js"></script>
+    <style>
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr {
+            text-align: center
+        }
+
+        .active {
+            display: none
+        }
+
+        body {
+            font-family: 'Inziu Iosevka SC';
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="/">记账簿</a>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">主页<span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="margin-top:70px">
+            <div class="container">
+                <div class="row"></div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>时间段</td>
+                                <td>百分比</td>
+                                <td>总金额</td>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(info,i) in infos" v-on:click="getDetail(i)">
+                            <tr>
+                                <td v-if="info.isSum===true" colspan="2">{{info.Week}}</td>
+                                <td v-if="info.isSum!==true">{{info.Week}}</td>
+                                <td v-if="info.isSum!==true" style="vertical-align:middle">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'"
+                                             :aria-valuenow="info.percent" aria-valuemin="0" aria-valuemax="100">
+                                            {{info.percent}}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{info.UseAmount}}</td>
+                            </tr>
+                            <tr v-if="info.isSum!==true" :class="{active:showTD(i)}">
+                                <td colspan="3" style="padding:0px" class="container">
+                                    <table class="table table-hover" style="margin:0px">
+                                        <thead>
+                                            <tr class="row col-10 offset-2" style="padding:0px">
+                                                <th class="col-2">日期</th>
+                                                <th class="col-2">类型</th>
+                                                <th class="col-3">内容</th>
+                                                <th class="col-3">金额</th>
+                                            </tr>
+                                        </thead>
+                                        <tr v-for="detail in info.detail" class="row col-10 offset-2" style="padding:0px">
+                                            <td class="col-2">{{detail.date|dateFormat}}</td>
+                                            <td class="col-2">{{detail.useType}}</td>
+                                            <td class="col-3">{{detail.useWay}}</td>
+                                            <td class="col-3">{{detail.useAmount}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar fixed-bottom navbar-light bg-light">
+        <hr />
+        <div class="container" style="text-align:center;vertical-align:middle">
+            <p style="margin-bottom:0px">&copy; 2018 - MoneyBook</p>
+        </div>
+    </nav>
+</body>
+</html>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            infos: []
+        },
+        created: function () {
+            this.$http.post("/Statistics/Month", { date: new Date().toLocaleDateString() }, { emulateJSON: true }).then(function (res) {
+                this.infos = res.body;
+                console.log(this.infos[0].detail);
+            });
+        },
+        methods: {
+            getDetail: function (i) {
+                this.infos[i].showDetail = !this.infos[i].showDetail;
+                if (this.infos[i].showDetail) {
+                    this.$http.post("/Statistics/GetWeekDetail",
+                        { weekIndex:this.infos[i].weekIndex },
+                        { emulateJSON: true }).then(function (res) {
+                            this.infos[i].detail = res.body;
+                            console.log(res.body);
+                        });
+                }
+            },
+            showTD: function (i) {
+                return !this.infos[i].showDetail;
+            }
+        },
+        filters: {
+            dateFormat(val) {
+                var value = new Date(val);
+                var year = value.getFullYear();
+                var month = formatNumber(value.getMonth() + 1);
+                var day = formatNumber(value.getDate());
+                return year + '-' + month + '-' + day;
+
+            }
+        }
+    });
+    function formatNumber(int) {
+        if (int.toString().length < 2) {
+            return "0" + int.toString();
+        }
+        else {
+            return int;
+        }
+    }
+</script>

@@ -41,5 +41,29 @@ namespace MoneyBook.BLL
                 UseWay = p.UseWay
             }).ToList();
         }
+
+        public List<WeekModel> Week(DateTime month)
+        {
+            var list = dal.Week(month);
+            var total = list.Sum(p => p.UseAmount);
+            return list.Select(p => new WeekModel()
+            {
+                UseAmount = p.UseAmount,
+                Week = $"{month.Month}月第{p.Week}周",
+                Percent = Math.Round(p.UseAmount * 100 / total, 2),
+                WeekIndex = p.Week
+            }).ToList();
+        }
+        public List<MoneyModel> GetWeekDetail(string week)
+        {
+            var list = dal.GetWeekDetail(week);
+            return list.Select(p => new MoneyModel()
+            {
+                IOFlag = p.IOFlag,
+                UseAmount = p.UseAmount,
+                UseType = p.UseType,
+                UseWay = p.UseWay
+            }).ToList();
+        }
     }
 }
