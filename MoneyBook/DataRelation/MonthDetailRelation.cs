@@ -15,7 +15,7 @@ namespace MoneyBook.DataRelation
         {
             var money = new MoneyEntity();
             money.Date = dataReader.GetString(0).ConvertToDateTime();
-            money.UseAmount = dataReader.GetDouble(1);
+            money.UseAmount = dataReader.GetDouble(1).FormatDouble();
             money.UseWay = dataReader.GetString(2);
             return money;
         }

@@ -24,7 +24,7 @@ namespace MoneyBook.BLL
                 ShowDetail = false,
                 UseTypeID = p.UseTypeID
             }).ToList();
-            list.Add(new MonthModel() { TotalMoney = list.Sum(p => p.TotalMoney), UseWay = "总计", IsSum = true });
+            list.Add(new MonthModel() { TotalMoney = Math.Round(list.Sum(p => p.TotalMoney), 2), UseWay = "总计", IsSum = true });
 
             return list;
         }
@@ -46,23 +46,29 @@ namespace MoneyBook.BLL
         {
             var list = dal.Week(month);
             var total = list.Sum(p => p.UseAmount);
-            return list.Select(p => new WeekModel()
+            var result = list.Select(p => new WeekModel()
             {
                 UseAmount = p.UseAmount,
-                Week = $"{month.Month}月第{p.Week}周",
+                Week = $"{month.Year}年第{p.Week}周",
                 Percent = Math.Round(p.UseAmount * 100 / total, 2),
-                WeekIndex = p.Week
+                WeekIndex = p.Week,
+                IsSum = false,
+                ShowDetail = false
             }).ToList();
+            var sum = new WeekModel() { UseAmount = total, Week = "总计", IsSum = true };
+            result.Add(sum);
+            return result;
         }
-        public List<MoneyModel> GetWeekDetail(string week)
+        public List<WeekDetailModel> GetWeekDetail(string week)
         {
             var list = dal.GetWeekDetail(week);
-            return list.Select(p => new MoneyModel()
+            return list.Select(p => new WeekDetailModel()
             {
                 IOFlag = p.IOFlag,
                 UseAmount = p.UseAmount,
                 UseType = p.UseType,
-                UseWay = p.UseWay
+                UseWay = p.UseWay,
+                Date = p.Date
             }).ToList();
         }
     }

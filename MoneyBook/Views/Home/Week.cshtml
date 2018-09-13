@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-    <div id="app">
+    <div id="app" style="padding-bottom:45px">
         <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -43,6 +43,15 @@
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li class="nav-item active">
                         <a class="nav-link" href="/">主页<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            统计
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/home/month">月度支出统计</a>
+                            <a class="dropdown-item" href="/home/week">每星期支出统计</a>
+                        </div>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
@@ -66,8 +75,8 @@
                         </thead>
                         <tbody v-for="(info,i) in infos" v-on:click="getDetail(i)">
                             <tr>
-                                <td v-if="info.isSum===true" colspan="2">{{info.Week}}</td>
-                                <td v-if="info.isSum!==true">{{info.Week}}</td>
+                                <td v-if="info.isSum===true" colspan="2">{{info.week}}</td>
+                                <td v-if="info.isSum!==true">{{info.week}}</td>
                                 <td v-if="info.isSum!==true" style="vertical-align:middle">
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="'width:'+ info.percent+'%'"
@@ -76,24 +85,24 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{info.UseAmount}}</td>
+                                <td>{{info.useAmount}}</td>
                             </tr>
                             <tr v-if="info.isSum!==true" :class="{active:showTD(i)}">
                                 <td colspan="3" style="padding:0px" class="container">
                                     <table class="table table-hover" style="margin:0px">
                                         <thead>
                                             <tr class="row col-10 offset-2" style="padding:0px">
-                                                <th class="col-2">日期</th>
-                                                <th class="col-2">类型</th>
-                                                <th class="col-3">内容</th>
-                                                <th class="col-3">金额</th>
+                                                <th class="col">日期</th>
+                                                <th class="col">类型</th>
+                                                <th class="col">内容</th>
+                                                <th class="col">金额</th>
                                             </tr>
                                         </thead>
                                         <tr v-for="detail in info.detail" class="row col-10 offset-2" style="padding:0px">
-                                            <td class="col-2">{{detail.date|dateFormat}}</td>
-                                            <td class="col-2">{{detail.useType}}</td>
-                                            <td class="col-3">{{detail.useWay}}</td>
-                                            <td class="col-3">{{detail.useAmount}}</td>
+                                            <td class="col">{{detail.date|dateFormat}}</td>
+                                            <td class="col">{{detail.useType}}</td>
+                                            <td class="col">{{detail.useWay}}</td>
+                                            <td class="col">{{detail.useAmount}}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -119,9 +128,9 @@
             infos: []
         },
         created: function () {
-            this.$http.post("/Statistics/Month", { date: new Date().toLocaleDateString() }, { emulateJSON: true }).then(function (res) {
+            this.$http.post("/Statistics/Week", { date: new Date().toLocaleDateString() }, { emulateJSON: true }).then(function (res) {
                 this.infos = res.body;
-                console.log(this.infos[0].detail);
+                console.log(this.infos);
             });
         },
         methods: {

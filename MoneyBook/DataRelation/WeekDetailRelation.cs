@@ -9,14 +9,17 @@ using System.Threading.Tasks;
 
 namespace MoneyBook.DataRelation
 {
-    public class WeekRelation : IDataRelation<WeekEntity>
+    public class WeekDetailRelation : IDataRelation<WeekEntity>
     {
         public WeekEntity DataReaderToEntity(DbDataReader dataReader)
         {
             var week = new WeekEntity();
-            week.Week = dataReader.GetString(0);
-            week.UseAmount = dataReader.GetDouble(1).FormatDouble();
-
+            week.Date = dataReader.GetString(0).ConvertToDateTime();
+            week.IOFlag = dataReader.GetString(1).ConvertToIOEnum();
+            week.UseWay = dataReader.GetString(2);
+            week.UseType = dataReader.GetString(3);
+            week.Week = dataReader.GetString(4);
+            week.UseAmount = dataReader.GetDouble(5).FormatDouble();
             return week;
         }
 

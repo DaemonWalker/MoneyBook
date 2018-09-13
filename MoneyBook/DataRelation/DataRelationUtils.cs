@@ -17,5 +17,9 @@ namespace MoneyBook.DataRelation
         {
             return Enum.Parse<IOEnum>(ioEnum);
         }
+        public static double FormatDouble(this double num)
+        {
+            return Math.Round(num, 2);
+        }
     }
 }

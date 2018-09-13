@@ -65,7 +65,7 @@ SELECT
 FROM
 	(
 	SELECT
-		STRFTIME( '%w', T.DATE ) WEEK,
+		STRFTIME( '%W', T.DATE ) WEEK,
 		T1.USE_AMOUNT 
 	FROM
 		DAY_INFO T
@@ -80,8 +80,8 @@ FROM
 	) TAB 
 GROUP BY
 	WEEK";
-            var bDate = new DateTime(month.Year, month.Month, 1);
-            var eDate = bDate.AddMonths(1);
+            var bDate = new DateTime(month.Year, 1, 1);
+            var eDate = bDate.AddYears(1);
             sql = string.Format(sql,
                 bDate.ToString(AppSettings.DayFormat),
                 eDate.ToString(AppSettings.DayFormat));
@@ -89,30 +89,33 @@ GROUP BY
             return this.DataAccess.QueryData(sql, new WeekRelation());
         }
 
-        public List<DayEntity> GetWeekDetail(string week)
+        public List<WeekEntity> GetWeekDetail(string week)
         {
             var sql = @"
 WITH TEMPT AS (
 	SELECT
 		T1.DATE,
-		T.MONEYINFO_ID,
 		T2.IO_FLAG,
 		T.USE_WAY,
 		T2.TYPE_NAME,
-		STRFTIME( '%W', T1.DATE ) AS WEEK_IDX 
+		STRFTIME( '%W', T1.DATE ) AS WEEK_IDX,
+		T.USE_AMOUNT 
 	FROM
 		MONEY_INFO T
 		INNER JOIN DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID
 		INNER JOIN TYPE_INFO T2 ON T.TYPE_ID = T2.TYPE_ID 
+	ORDER BY
+		T1.DATE,
+		T.TYPE_ID 
 	) SELECT
 	TEMPT.* 
 FROM
 	TEMPT 
 WHERE
-	WEEK_IDX = {0}";
+	WEEK_IDX = '{0}'";
             sql = string.Format(sql, week);
 
-            return this.DataAccess.QueryData(sql, new DayRelation());
+            return this.DataAccess.QueryData(sql, new WeekDetailRelation());
         }
     }
 }

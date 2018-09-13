@@ -19,9 +19,15 @@ namespace MoneyBook.Models
         public double Percent { get; set; }
 
         [DataMember]
-        public int WeekIndex { get; set; }
+        public string WeekIndex { get; set; }
 
         [DataMember]
         public List<MoneyModel> Detail { get; set; }
+
+        [DataMember]
+        public bool IsSum { get; set; }
+
+        [DataMember]
+        public bool ShowDetail { get; set; }
     }
 }
