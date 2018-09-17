@@ -10,47 +10,26 @@ namespace MoneyBook.DAL
 {
     public class StatisticsDAL : DALBase
     {
-        public List<MonthEntity> MonthInfo(DateTime month)
+        private VInfoDAL vInfo = VInfoDAL.GetObj();
+        public List<VInfoEntity> MonthInfo(DateTime month)
         {
-            var sql = @"
-SELECT
-	T3.TYPE_NAME,
-	SUM( T2.USE_AMOUNT ) AS TOTAL_AMOUNT,
-	T3.TYPE_ID 
-FROM
-	DAY_INFO T
-	INNER JOIN MONEY_INFO T2 ON T.DAY_ID = T2.DAY_ID
-	INNER JOIN TYPE_INFO T3 ON T2.TYPE_ID = T3.TYPE_ID 
-WHERE
-	T.DATE LIKE '{0}%' 
-	AND T3.IO_FLAG = 'O' 
-GROUP BY
-	T3.TYPE_ID,
-	T3.TYPE_NAME 
-ORDER BY
-	TOTAL_AMOUNT DESC";
-            sql = string.Format(sql, month.ToString(AppSettings.MonthFormat));
-
-            return this.DataAccess.QueryData(sql, new MonthRelation());
+            var date = new DateTime(month.Year, month.Month, 1);
+            return vInfo.QueryGroupByType(date, date.AddMonths(1));
         }
 
-        public List<MoneyEntity> GetMonthDetail(DateTime month, string typeID)
+        public List<VInfoEntity> GetMonthDetail(DateTime month, string typeID)
         {
             var sql = @"
 SELECT
-	T1.DATE,
+	T.DATE,
 	T.USE_AMOUNT,
 	T.USE_WAY 
 FROM
-	MONEY_INFO T
-	INNER JOIN DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID
-	INNER JOIN TYPE_INFO T3 ON T.TYPE_ID = T3.TYPE_ID 
+	V_INFO T 
 WHERE
-	T1.DATE LIKE '{0}%' 
+	T.DATE LIKE '{0}%' 
 	AND T.TYPE_ID = '{1}' 
-	AND T3.IO_FLAG = 'O' 
-ORDER BY
-	T1.DATE";
+	AND T.IO_FLAG = 'O'";
             sql = string.Format(sql, month.ToString(AppSettings.MonthFormat), typeID);
 
             return this.DataAccess.QueryData(sql, new MonthDetailRelation());
@@ -60,26 +39,16 @@ ORDER BY
         {
             var sql = @"
 SELECT
-	WEEK,
-	SUM( TAB.USE_AMOUNT ) 
+	T.WEEK_COL,
+	SUM( T.USE_AMOUNT ) AS USE_AMOUNT 
 FROM
-	(
-	SELECT
-		STRFTIME( '%W', T.DATE ) WEEK,
-		T1.USE_AMOUNT 
-	FROM
-		DAY_INFO T
-		INNER JOIN MONEY_INFO T1 ON T.DAY_ID = T1.DAY_ID
-		INNER JOIN TYPE_INFO T2 ON T1.TYPE_ID = T2.TYPE_ID 
-	WHERE
-		T2.IO_FLAG = 'O' 
-		AND T.DATE > DATE( '{0}', 'start of day', - ( ( strftime( '%w', '{0}' ) + 7 ) % 8 ) || ' days' ) 
-		AND T.DATE < DATE( '{1}', 'start of day', - ( ( strftime( '%w', '{1}' ) + 7 ) % 8 ) || ' days' ) 
-	ORDER BY
-		T.DATE 
-	) TAB 
+	V_WEEK T 
+WHERE
+	T.DATE_COL >= DATE( '{0}' ) 
+	AND T.DATE_COL < DATE( '{1}' ) 
+	AND T.IO_FLAG = 'O' 
 GROUP BY
-	WEEK";
+	T.WEEK_COL";
             var bDate = new DateTime(month.Year, 1, 1);
             var eDate = bDate.AddYears(1);
             sql = string.Format(sql,
@@ -92,27 +61,17 @@ GROUP BY
         public List<WeekEntity> GetWeekDetail(string week)
         {
             var sql = @"
-WITH TEMPT AS (
-	SELECT
-		T1.DATE,
-		T2.IO_FLAG,
-		T.USE_WAY,
-		T2.TYPE_NAME,
-		STRFTIME( '%W', T1.DATE ) AS WEEK_IDX,
-		T.USE_AMOUNT 
-	FROM
-		MONEY_INFO T
-		INNER JOIN DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID
-		INNER JOIN TYPE_INFO T2 ON T.TYPE_ID = T2.TYPE_ID 
-	ORDER BY
-		T1.DATE,
-		T.TYPE_ID 
-	) SELECT
-	TEMPT.* 
+SELECT
+	T.DATE,
+	T.IO_FLAG,
+	T.USE_WAY,
+	T.TYPE_NAME,
+	T.WEEK_COL,
+	T.USE_AMOUNT 
 FROM
-	TEMPT 
+	V_WEEK T
 WHERE
-	WEEK_IDX = '{0}'";
+	T.WEEK_COL = '{0}'";
             sql = string.Format(sql, week);
 
             return this.DataAccess.QueryData(sql, new WeekDetailRelation());

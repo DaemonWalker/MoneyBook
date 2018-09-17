@@ -13,7 +13,7 @@ namespace MoneyBook.BLL
         private DayDAL dal = new DayDAL();
         public void CheckData(IEnumerable<DayModel> data)
         {
-            var addList = new List<MoneyEntity>();
+            var addList = new List<VInfoEntity>();
             var delList = new List<string>();
             foreach (var day in data)
             {
@@ -21,13 +21,13 @@ namespace MoneyBook.BLL
                 {
                     if (string.IsNullOrWhiteSpace(money.ID))
                     {
-                        addList.Add(new MoneyEntity()
+                        addList.Add(new VInfoEntity()
                         {
                             Date = day.Date,
                             IOFlag = money.IOFlag,
                             UseAmount = money.UseAmount,
                             UseWay = money.UseWay,
-                            UseTypeID = money.UseTypeID
+                            TypeID = money.UseTypeID
                         });
                     }
                     else if (money.IsDelete)
@@ -58,7 +58,7 @@ namespace MoneyBook.BLL
                     UseWay = p.UseWay,
                     Percent = Math.Round(p.UseAmount * 100 / totalMoney, 2),
                     IsDelete = false,
-                    UseType = p.UseType
+                    UseType = p.TypeName
                 }).ToList();
 
                 list.Add(day);

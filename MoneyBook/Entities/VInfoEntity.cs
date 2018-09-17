@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MoneyBook.Entities
 {
     [DataContract]
-    public class MoneyEntity
+    public class VInfoEntity
     {
         [DataMember]
         public IOEnum IOFlag { get; set; }
@@ -23,7 +23,16 @@ namespace MoneyBook.Entities
         public DateTime Date { get; set; }
 
         [DataMember]
-        public string UseTypeID { get; set; }
+        public string TypeID { get; set; }
+
+        [DataMember]
+        public string DayID { get; set; }
+
+        [DataMember]
+        public string MoneyID { get; set; }
+
+        [DataMember]
+        public string TypeName { get; set; }
         
     }
 }

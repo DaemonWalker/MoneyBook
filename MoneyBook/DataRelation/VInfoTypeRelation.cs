@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace MoneyBook.DataRelation
 {
-    public class MonthDetailRelation : IDataRelation<VInfoEntity>
+    public class VInfoTypeRelation : IDataRelation<VInfoEntity>
     {
         public VInfoEntity DataReaderToEntity(DbDataReader dataReader)
         {
-            var money = new VInfoEntity();
-            money.Date = dataReader.GetString(0).ConvertToDateTime();
-            money.UseAmount = dataReader.GetDouble(1).FormatDouble();
-            money.UseWay = dataReader.GetString(2);
-            return money;
+            var entity = new VInfoEntity();
+            entity.TypeName = dataReader.GetString(0);
+            entity.UseAmount = dataReader.GetDouble(1).FormatDouble();
+            entity.TypeID = dataReader.GetString(2);
+            return entity;
         }
 
         [NotImplemented]

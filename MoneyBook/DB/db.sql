@@ -63,4 +63,34 @@ CREATE TABLE "MONEY_INFO" (
 -- ----------------------------
 UPDATE "sqlite_sequence" SET seq = 9 WHERE name = 'MONEY_INFO';
 
+-- ----------------------------
+-- View structure for V_INFO
+-- ----------------------------
+SELECT
+	T.DAY_ID,
+	T.MONEYINFO_ID,
+	T.TYPE_ID,
+	T.USE_AMOUNT,
+	T.USE_WAY,
+	T1.DATE,
+	T2.TYPE_NAME,
+	T2.IO_FLAG,
+	DATE( T1.DATE ) AS DATE_COL 
+FROM
+	MONEY_INFO T
+	INNER JOIN DAY_INFO T1 ON T.DAY_ID = T1.DAY_ID
+	INNER JOIN TYPE_INFO T2 ON T.TYPE_ID = T2.TYPE_ID 
+ORDER BY
+	T1.DATE,
+	T2.IO_FLAG DESC,
+	T2.TYPE_ID
+
+-- ----------------------------
+-- View structure for V_WEEK
+-- ----------------------------
+SELECT
+	T.*,
+	STRFTIME( '%W', T.DATE ) AS WEEK_COL 
+FROM
+	V_INFO T
 PRAGMA foreign_keys = true;

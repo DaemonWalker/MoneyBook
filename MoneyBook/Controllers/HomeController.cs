@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyBook.Models;
+using MoneyBook.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,7 +54,8 @@ namespace MoneyBook.Controllers
 
         public IActionResult Test()
         {
-            return View();
+            var i = 0;
+            return Content((0 / i).ToString());
         }
 
         public IActionResult Types()

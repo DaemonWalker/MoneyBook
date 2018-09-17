@@ -33,5 +33,10 @@ namespace MoneyBook.Controllers
         {
             return Json(bll.GetWeekDetail(weekIndex));
         }
+
+        public IActionResult GetDayDetail(DateTime bDate,DateTime eDate)
+        {
+            return null;
+        }
     }
 }

@@ -14,17 +14,17 @@ namespace MoneyBook.BLL
         public List<MonthModel> MonthInfo(DateTime month)
         {
             var entities = dal.MonthInfo(month);
-            var totalMoney = entities.Sum(p => p.TotalMoney);
+            var totalMoney = entities.Sum(p => p.UseAmount);
             var list = entities.Select(p => new MonthModel()
             {
-                TotalMoney = p.TotalMoney,
-                UseType = p.UseType,
-                Percent = Math.Round(p.TotalMoney * 100 / totalMoney, 2),
+                TotalMoney = p.UseAmount,
+                UseType = p.TypeName,
+                Percent = Math.Round(p.UseAmount * 100 / totalMoney, 2),
                 IsSum = false,
                 ShowDetail = false,
-                UseTypeID = p.UseTypeID
+                UseTypeID = p.TypeID
             }).ToList();
-            list.Add(new MonthModel() { TotalMoney = Math.Round(list.Sum(p => p.TotalMoney), 2), UseWay = "总计", IsSum = true });
+            list.Add(new MonthModel() { TotalMoney = Math.Round(list.Sum(p => p.TotalMoney), 2), UseType = "总计", IsSum = true });
 
             return list;
         }

@@ -11,32 +11,15 @@ namespace MoneyBook.DAL
 {
     public class DayDAL : DALBase
     {
-        public List<DayEntity> QueryByMonth(DateTime month)
+        public List<VInfoEntity> QueryByMonth(DateTime month)
         {
-            var sql = @"
-SELECT
-	T.DATE,
-	T1.MONEYINFO_ID,
-	T2.IO_FLAG,
-	T1.USE_WAY,
-	T1.USE_AMOUNT,
-	T2.TYPE_NAME 
-FROM
-	DAY_INFO T
-	INNER JOIN MONEY_INFO T1 ON T.DAY_ID = T1.DAY_ID
-	INNER JOIN TYPE_INFO T2 ON T2.TYPE_ID = T1.TYPE_ID 
-WHERE
-	T.DATE LIKE '{0}%' 
-ORDER BY
-	T.DATE";
-            sql = string.Format(sql, month.ToString(AppSettings.MonthFormat));
-
-            return this.DataAccess.QueryData(sql, new DayRelation());
+            var date = new DateTime(month.Year, month.Month, 1);
+            return VInfoDAL.GetObj().QueryMoney(date, date.AddMonths(1));
         }
 
-        public void InsertMoneyInfo(IEnumerable<MoneyEntity> moneys)
+        public void InsertMoneyInfo(IEnumerable<VInfoEntity> moneys)
         {
-            this.DataAccess.ExecuteNonQueryWithTransaction((command) =>
+            this.DataAccess.ExecuteNonQueryWithTransaction((Action<System.Data.Common.DbCommand>)((command) =>
             {
                 var daySql = @"
             INSERT INTO DAY_INFO (
@@ -65,10 +48,10 @@ ORDER BY
                 {
                     command.CommandText = string.Format(daySql, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
-                    command.CommandText = string.Format(sql, money.UseTypeID, money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
+                    command.CommandText = string.Format(sql, (object)money.TypeID, money.UseWay, money.UseAmount, money.Date.ToString(AppSettings.DayFormat));
                     command.ExecuteNonQuery();
                 }
-            });
+            }));
         }
 
         public void DeleteMoneyInfo(IEnumerable<string> moneyIDs)
