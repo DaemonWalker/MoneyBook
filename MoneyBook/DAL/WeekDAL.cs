@@ -8,14 +8,8 @@ using System.Threading.Tasks;
 
 namespace MoneyBook.DAL
 {
-    public class StatisticsDAL : DALBase
+    public class WeekDAL : DALBase
     {
-        private VInfoDAL vInfo = VInfoDAL.GetObj();
-        public List<VInfoEntity> MonthInfo(DateTime month)
-        {
-            var date = new DateTime(month.Year, month.Month, 1);
-            return vInfo.QueryGroupByType(date, date.AddMonths(1));
-        }
 
         public List<VInfoEntity> GetMonthDetail(DateTime month, string typeID)
         {

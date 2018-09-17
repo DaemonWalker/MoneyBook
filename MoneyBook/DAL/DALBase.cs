@@ -10,9 +10,10 @@ namespace MoneyBook.DAL
     {
         protected DataAccess DataAccess { get; set; }
         protected DataConverter DataConverter { get; set; }
-        public DALBase()
+        protected DALBase()
         {
             DataAccess = DataAccessFactory.GetDataAccess();
         }
+        
     }
 }
