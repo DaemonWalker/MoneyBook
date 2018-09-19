@@ -14,7 +14,6 @@ namespace MoneyBook.BLL
         private VInfoDAL infoDAL = VInfoDAL.GetObj();
         public List<MonthModel> MonthInfo(DateTime month)
         {
-            month = new DateTime(month.Year, month.Month, 1);
             var entities = infoDAL.QueryMoney(month, month.AddMonths(1));
             var totalMoney = entities.Sum(p => p.UseAmount);
             var list = entities.Select(p => new MonthModel()
@@ -72,6 +71,13 @@ namespace MoneyBook.BLL
                 UseWay = p.UseWay,
                 Date = p.Date
             }).ToList();
+        }
+
+        public object MonthInfoCharts(DateTime month)
+        {
+            return infoDAL.QueryMoney(month, month.AddMonths(1))
+                .Select(p => new { name = p.TypeName, value = p.UseAmount })
+                .ToList();
         }
     }
 }

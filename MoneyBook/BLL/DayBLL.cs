@@ -19,7 +19,7 @@ namespace MoneyBook.BLL
             {
                 foreach (var money in day.Detail)
                 {
-                    if (string.IsNullOrWhiteSpace(money.ID))
+                    if (string.IsNullOrWhiteSpace(money.ID) && money.IsDelete == false)
                     {
                         addList.Add(new VInfoEntity()
                         {
@@ -30,7 +30,7 @@ namespace MoneyBook.BLL
                             TypeID = money.UseTypeID
                         });
                     }
-                    else if (money.IsDelete)
+                    else if (string.IsNullOrWhiteSpace(money.ID) == false && money.IsDelete)
                     {
                         delList.Add(money.ID);
                     }
