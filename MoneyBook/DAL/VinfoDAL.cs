@@ -44,6 +44,26 @@ WHERE
             return this.DataAccess.QueryData(sql, new VInfoRelation());
         }
 
+        public List<VInfoEntity> QueryMoneyType(DateTime date)
+        {
+            var sql = @"
+SELECT
+	T.TYPE_ID,
+	T.TYPE_NAME,
+	SUM( T.USE_AMOUNT ) AS USE_AMOUNT 
+FROM
+	V_INFO T 
+WHERE
+	T.DATE LIKE '{0}%' 
+GROUP BY
+	T.TYPE_ID,
+	T.TYPE_NAME";
+            sql = string.Format(sql, date.ToString(AppSettings.MonthFormat));
+
+            return this.DataAccess.QueryData(sql, new MonthTypeRelation());
+
+        }
+
         public List<VInfoEntity> QueryGroupByType(DateTime? bDate = null, DateTime? eDate = null)
         {
             var sql = @"
@@ -58,7 +78,7 @@ WHERE
 	AND T.DATE_COL < DATE( '{1}' ) 
 GROUP BY
 	T.TYPE_NAME";
-            sql = string.Format(sql, 
+            sql = string.Format(sql,
                 (bDate ?? DateTime.MinValue).ToString(AppSettings.DayFormat),
                 (eDate ?? DateTime.MaxValue).ToString(AppSettings.DayFormat));
 
